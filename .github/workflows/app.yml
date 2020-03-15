@@ -24,7 +24,7 @@ jobs:
         ssh-keyscan github.com >> ~/.ssh/known_hosts
         eval "$(ssh-agent -s)"
         ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-        git clone git@github.com:brandongray/terraform-gcloud.git
     - name: Clone private repo
       run: |
         git clone git@github.com:brandongray/terraform-gcloud.git
+      GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
