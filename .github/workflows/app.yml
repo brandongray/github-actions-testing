@@ -8,7 +8,8 @@ on:
 jobs:
   run_application:
     runs-on: ubuntu-latest
-
+    env:
+      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.7
@@ -16,19 +17,13 @@ jobs:
       with:
         python-version: 3.7
     - name: Run Application
-      run: |
-        python app.py
+      run: python app.py
     - name: Setup SSH Keys and known_hosts
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan github.com >> ~/.ssh/known_hosts
         ssh-agent -a $SSH_AUTH_SOCK
         ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
     - name: Clone private repo
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: |
-        ssh-add -l $SSH_AUTH_SOCK
         git clone git@github.com:brandongray/terraform-gcloud.git
